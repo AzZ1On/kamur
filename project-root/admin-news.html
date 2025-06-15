@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Админка — Новости</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"/>
+  <link rel="icon" href="images/favicon.png" type="image/x-icon">
+  <style>
+    :root {
+      --primary-color: #e06d1a;
+      --light-color: #fff;
+      --gray: #f5f5f5;
+      --border: #ddd;
+    }
+
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--gray);
+      padding-top: 100px;
+      color: #333;
+    }
+
+    .main-nav {
+      background: var(--light-color);
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 20px;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .nav-menu a:hover {
+      color: var(--primary-color);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .form-group input[type="text"],
+    .form-group textarea {
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 16px;
+      resize: vertical;
+    }
+
+    .form-group input[type="file"] {
+      font-size: 15px;
+    }
+
+    button {
+      background: var(--primary-color);
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #c95c12;
+    }
+
+    .news-post {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-top: 30px;
+      padding: 20px;
+      background: #fafafa;
+    }
+
+    .news-post h3 {
+      margin-bottom: 10px;
+    }
+
+    .news-post p {
+      margin-bottom: 10px;
+    }
+
+    .news-post img, .news-post video, .news-post iframe {
+      max-width: 100%;
+      border-radius: 4px;
+    }
+
+    .delete-btn {
+      margin-top: 10px;
+      background: #cc0000;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Авторизация */
+    #login-block {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 40px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    #admin-panel {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Шапка -->
+  <nav class="main-nav">
+    <div class="nav-container">
+      <a href="index.html"><img src="images/лого1.png" height="40" alt="Логотип"></a>
+      <div class="nav-menu">
+        <a href="index.html">Главная</a>
+        <a href="news.html">Новости</a>
+        <a href="products.html">Товары</a>
+        <a href="equipment.html">Оборудование</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Авторизация -->
+  <div id="login-block">
+    <h2>Вход в админ-панель</h2>
+    <input type="text" id="login" placeholder="Логин">
+    <input type="password" id="password" placeholder="Пароль">
+    <button onclick="authorize()">Войти</button>
+    <p id="auth-error" style="color:red;"></p>
+  </div>
+
+  <!-- Админка -->
+  <div class="container" id="admin-panel">
+    <h1>Создать новость</h1>
+    <form id="news-form">
+      <div class="form-group">
+        <input type="text" id="title" placeholder="Заголовок" required>
+        <textarea id="description" placeholder="Текст новости..." required></textarea>
+        <input type="file" id="media" accept="image/*,video/*,.pdf">
+      </div>
+      <button type="submit">Опубликовать</button>
+    </form>
+
+    <h2 style="margin-top: 40px;">Новости</h2>
+    <div id="news-list"></div>
+  </div>
+
+  <script>
+    // Авторизация
+    function authorize() {
+      const login = document.getElementById('login').value;
+      const password = document.getElementById('password').value;
+      const error = document.getElementById('auth-error');
+
+      if (login === 'Kamur1234' && password === 'Amina2008') {
+        document.getElementById('login-block').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+      } else {
+        error.textContent = 'Неверный логин или пароль!';
+      }
+    }
+
+    // Работа с формой
+    const form = document.getElementById('news-form');
+    const list = document.getElementById('news-list');
+
+    const posts = JSON.parse(localStorage.getItem('news-posts') || '[]');
+    posts.forEach(drawPost);
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const file = document.getElementById('media').files[0];
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        const post = {
+          id: Date.now(),
+          title,
+          description,
+          media: reader.result,
+          type: file ? file.type : null
+        };
+        posts.push(post);
+        localStorage.setItem('news-posts', JSON.stringify(posts));
+        drawPost(post);
+        form.reset();
+      };
+
+      if (file) {
+        reader.readAsDataURL(file);
+      } else {
+        const post = {
+          id: Date.now(),
+          title,
+          description,
+          media: null,
+          type: null
+        };
+        posts.push(post);
+        localStorage.setItem('news-posts', JSON.stringify(posts));
+        drawPost(post);
+        form.reset();
+      }
+    });
+
+    function drawPost(post) {
+      const div = document.createElement('div');
+      div.className = 'news-post';
+      div.innerHTML = `
+        <h3>${post.title}</h3>
+        <p>${post.description}</p>
+        ${post.media ? renderMedia(post.media, post.type) : ''}
+        <button class="delete-btn" onclick="deletePost(${post.id}, this)">Удалить</button>
+      `;
+      list.prepend(div);
+    }
+
+    function renderMedia(src, type) {
+      if (type.startsWith('image')) {
+        return `<img src="${src}" alt="media">`;
+      } else if (type.startsWith('video')) {
+        return `<video controls src="${src}"></video>`;
+      } else if (type === 'application/pdf') {
+        return `<iframe src="${src}" width="100%" height="400px"></iframe>`;
+      }
+      return '';
+    }
+
+    function deletePost(id, btn) {
+      const index = posts.findIndex(p => p.id === id);
+      if (index !== -1) {
+        posts.splice(index, 1);
+        localStorage.setItem('news-posts', JSON.stringify(posts));
+        btn.parentElement.remove();
+      }
+    }
+  </script>
+</body>
+</html>

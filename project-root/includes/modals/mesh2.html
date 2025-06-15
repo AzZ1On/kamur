@@ -1,0 +1,14 @@
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3 id="form-title">Оставить заявку</h3>
+    <form method="POST" action="send.php">
+      <input type="text" name="name" placeholder="ФИО" required />
+      <input type="tel" name="phone" placeholder="Телефон" required />
+      <input type="email" name="email" placeholder="Email" required />
+      <div class="form-btn-container">
+        <button class="btn" type="submit" id="form-submit">Отправить</button>
+      </div>
+    </form>
+  </div>
+</div>
